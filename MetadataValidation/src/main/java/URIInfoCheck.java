@@ -20,10 +20,12 @@ public class URIInfoCheck {
     private static UriInfo uriInfo;
 
     public static void main(String[] args) {
-        String url = "https://services.odata.org/V2/(S(test))/OData/OData.svc/Products?$filter=Price le 3.5m&$top=3";
+        String url = "https://services.odata.org/V2/(S(test))/OData/OData.svc/Products?$filter=Price le 3.2m or Rating eq 5&$top=3&$skip=2&$orderby=Price desc";
+        
+        
         try {
-            String edmx = "C://Desktop/ReadWritemetadata.xml";
-            Edm edm = MetadataValidation.getEdm(edmx);
+            String edmxFilePath = "C:/Users/i065677/Desktop/ReadWritemetadata.xml";
+            Edm edm = MetadataValidation.getEdm(edmxFilePath);
             List<PathSegment> pathSegments = getPathSegment("Products");
             Map<String, String> queryParams = getQueryMap(url);
             uriInfo = UriParser.parse(edm, pathSegments, queryParams);
@@ -39,7 +41,10 @@ public class URIInfoCheck {
             e.printStackTrace();
         }
     }
-
+    
+    /**
+     * Example: Products, Products(1), Products(1)/Supplier
+     */
     private static List<PathSegment> getPathSegment(String entitySet) {
         List<PathSegment> pathSegments = new ArrayList<PathSegment>();
         ODataPathSegmentImpl pathSeg = new ODataPathSegmentImpl();
