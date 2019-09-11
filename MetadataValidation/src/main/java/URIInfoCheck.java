@@ -15,6 +15,8 @@ import org.apache.olingo.odata2.api.exception.ODataMessageException;
 import org.apache.olingo.odata2.api.uri.PathSegment;
 import org.apache.olingo.odata2.api.uri.UriInfo;
 import org.apache.olingo.odata2.api.uri.UriParser;
+import org.apache.olingo.odata2.api.uri.expression.CommonExpression;
+import org.apache.olingo.odata2.core.uri.expression.BinaryExpressionImpl;
 
 public class URIInfoCheck {
     private static UriInfo uriInfo;
@@ -24,11 +26,13 @@ public class URIInfoCheck {
         
         
         try {
-            String edmxFilePath = "C:/Users/i065677/Desktop/ReadWritemetadata.xml";
+            String edmxFilePath = "C:/Users/Desktop/ReadWritemetadata.xml";
             Edm edm = MetadataValidation.getEdm(edmxFilePath);
             List<PathSegment> pathSegments = getPathSegment("Products");
             Map<String, String> queryParams = getQueryMap(url);
             uriInfo = UriParser.parse(edm, pathSegments, queryParams);
+            
+            printFilterExpression(uriInfo);
 
         } catch (EdmException e) {
             // TODO Auto-generated catch block
@@ -42,6 +46,18 @@ public class URIInfoCheck {
         }
     }
     
+    private static void printFilterExpression(UriInfo uriInfo2) {
+        String filterString = uriInfo.getFilter().getUriLiteral();
+        BinaryExpressionImpl filterExp = (BinaryExpressionImpl) uriInfo.getFilter().getExpression();
+        System.out.println("Filter String : "+ filterString);
+        
+        BinaryExpressionImpl leftFilterExp = (BinaryExpressionImpl) filterExp.getLeftOperand();
+        System.out.println("Filter Expression LEFT : "+ leftFilterExp.getLeftOperand().getUriLiteral());
+        
+        //Similarly you can get each of the filter parts.
+        
+    }
+
     /**
      * Example: Products, Products(1), Products(1)/Supplier
      */
